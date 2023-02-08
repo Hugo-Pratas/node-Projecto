@@ -11,10 +11,6 @@ router.get('/', async function (req, res) {
     })
     res.send(videos);
 });
-router.get('/:id_video', async function (req, res) {
-    //serviço bd
-    res.send("Autores");
-});
 router.get('/suggested/:tag_id', async function (req, res) {
     res.send("Criar autor");
 });
