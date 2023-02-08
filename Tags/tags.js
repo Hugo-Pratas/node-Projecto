@@ -7,6 +7,6 @@ router.get('/',async function (req, res) {
     tags.forEach(tags=>{
         tags.tid=tags.tid.toString();
     })
-    res.send(tags);
+    res.json(tags);
 });
 module.exports = router;

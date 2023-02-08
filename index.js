@@ -1,7 +1,14 @@
 const express = require('express');
 const app = express();
-const cors = require('cors')
-app.use(cors())
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS');
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, x-ijt");
+    res.header('Access-Control-Allow-Credentials', "true");
+
+    if ('OPTIONS' === req.method) return res.sendStatus(200);
+    next();
+});
 
 app.use("/videos", require("./Videos/getVideos"));
 app.use("/channels", require("./Channels/getChannels"));

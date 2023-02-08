@@ -13,7 +13,7 @@ router.get('/', async function (req, res) {
     for (const video of videos) {
         videos_send.push(await videoObject(video))
     }
-    res.send(videos_send);
+    res.json(videos_send);
 });
 router.get('/:id_video', async function (req, res) {
     video = await getVideo(req.params.id_video);
@@ -61,7 +61,7 @@ async function videoObject(video) {  //peço desculpa aos deuses do backend mas 
         video_object.tags = tags1.join(", ")
 
         //logo
-        logo = await query('SELECT imagem FROM canal where id=?', [video.canal])
+        logo = await query('SELECT logo FROM canal where id=?', [video.canal])
         video_object.channel_logo = logo[0].imagem
 
         video_object.date = video.data_publicacao
