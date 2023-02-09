@@ -13,12 +13,22 @@ router.get('/:id_channel',async function (req, res) {
         comments.id=comments.id.toString();
         comments.canal = comments.canal.toString();
     })
-    res.send(comments);
+    if (comments.length<1){
+        res.send( [   {
+            "body": "",
+            "id": "",
+            "date": "",
+            "email": "",
+            "username": ""
+        }]);
+    }else {
+        res.send(comments)
+    }
 });
 
 router.post('/:id_channel',async function (req, res) {
     await query('INSERT INTO comentario(username, email, body, canal) VALUES(?, ?, ?, ?)',[req.body.field_username[0].value, req.body.field_email[0].value, req.body.comment_body[0].value, req.params.id_channel])
-    res.send("ENVIOOOUUUU")
+    res.json("Canal Enviado")
 });
 
 
