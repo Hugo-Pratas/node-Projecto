@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {query} = require("../Services/Query_db")
+const ExcelJS = require("exceljs");
 
 router.get('/',async function (req, res) {
     playlists = await query("SELECT * FROM playlist")
@@ -25,6 +26,22 @@ router.get('/',async function (req, res) {
         playlist.category=playlist.category.toString();
     }
     res.send(playlists);
+});
+router.get('/excel', async function (req, res) {
+    tabela= await query('SELECT * FROM PLAYLIST')
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet2');
+
+    worksheet.addRow(['id', 'slug', 'category', "title","thumbnail","image"]);    tabela.forEach(rowData => {
+        worksheet.addRow(Object.values(rowData));
+    });
+
+    excel= workbook.xlsx.writeBuffer('playlist_data.xlsx')
+        .then(function(file) {
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', 'attachment; filename=Playlist.xlsx');
+            res.send(file)
+        });
 });
 router.get('/:id_playlist', async function (req, res) {
     playlistId = await query("SELECT * FROM playlist WHERE id = ?", [req.params.id_playlist]);
