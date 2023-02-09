@@ -26,10 +26,10 @@ router.get('/excel', async function (req, res) {
         worksheet.addRow(Object.values(rowData));
     });
 
-    excel= workbook.xlsx.writeFile('videos_data.xlsx')
+    workbook.xlsx.writeBuffer('videos_data.xlsx')
         .then(function(file) {
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.setHeader('Content-Disposition', 'attachment; filename=TROJAN.xlsx');
+            res.setHeader('Content-Disposition', 'attachment; filename=Videos.xlsx');
             res.send(file)
         });
 });
