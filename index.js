@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+app.use(express.urlencoded());
+app.use(express.json());
+
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", req.headers.origin);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE,OPTIONS');

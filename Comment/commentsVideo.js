@@ -11,6 +11,7 @@ router.get('/:id_video',async function (req, res) {
     comments = await query("SELECT * FROM comentario WHERE video =? ORDER BY date DESC LIMIT 10 OFFSET ?",[req.params.id_video,page])
     comments.forEach(comments=>{
         comments.id=comments.id.toString();
+        comments.video = comments.video.toString();
     })
     res.send(comments);
 });
