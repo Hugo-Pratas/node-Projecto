@@ -10,8 +10,8 @@ router.get('/', async function (req, res) {
 router.get('/suggested', async function (req, res) {
     suggestedThematic = await query("SELECT * FROM TEMATICA");
     let id_thematic = Math.floor(Math.random() * (suggestedThematic.length));
-    console.log(id_thematic);
-    res.send(suggestedThematic[id_thematic]);
+    suggestedThematic[id_thematic].id=suggestedThematic[id_thematic].id.toString()
+    res.send([suggestedThematic[id_thematic]]);
 });
 
 router.get('/:id_thematic', async function (req, res) {

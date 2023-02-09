@@ -13,12 +13,15 @@ router.get('/', async function (req, res) {
     for (const video of videos) {
         videos_send.push(await videoObject(video))
     }
-    res.json(videos_send);
+    res.send(videos_send);
 });
 router.get('/:id_video', async function (req, res) {
-    video = await getVideo(req.params.id_video);
-    video=await videoObject(video[0])
-    res.send([video])
+    videos = await getVideo(req.params.id_video);
+    videos_res=[]
+    for (let video of videos) { //podem vir mais videos se o id video for 8,2
+       videos_res.push(await videoObject(video))
+    }
+    res.send(videos_res)
 });
 router.get('/suggested/:tag_id', async function (req, res) {
     videos_tag=await query("SELECT * FROM video_tag WHERE tag_id=? ORDER BY RAND() LIMIT 10",[req.params.tag_id])
@@ -31,23 +34,33 @@ router.get('/suggested/:tag_id', async function (req, res) {
     res.send(videos);
 });
 router.get('/tag/:tag_name', async function (req, res) {
-    res.send("Criar autor");
+    videos= await query("SELECT * FROM video_tag WHERE name=?",[req.params.tag_name])
+    for (const video of videos) {
+        video.video_id=video.video_id.toString()
+        video.tag_id=video.tag_id.toString()
+    }
+    res.send(videos);
 });
 
 router.get('/tagid/:tag_id', async function (req, res) {
-    res.send("Criar autor");
+    videos= await query("SELECT * FROM video_tag WHERE tag_id=?",[req.params.tag_id])
+    for (const video of videos) {
+        video.video_id=video.video_id.toString()
+        video.tag_id=video.tag_id.toString()
+    }
+    res.send(videos);
 });
 
-function getVideo(id_video){
+function getVideo(ids_video){
     return new Promise(async function (resolve, reject) {
-        resolve(await query("SELECT * FROM VIDEO WHERE id=?", [id_video]))
+        resolve(await query(`SELECT * FROM VIDEO WHERE id in(${ids_video})`)) //SQL injection
     })
 }
 
 async function videoObject(video) {  //peço desculpa aos deuses do backend mas o drupal ainda assombra o nosso frontEnd por isso isto precisa de ser string =)
     return new Promise(async resolve => {
         video_object = {};
-        video_object.thumbnail = ""
+        video_object.thumbnail = video.yt_thumbnail
         video_object.channel = video.canal.toString()
         video_object.description = video.descricao
         video_object.category = video.categoria.toString()
@@ -62,11 +75,11 @@ async function videoObject(video) {  //peço desculpa aos deuses do backend mas 
 
         //logo
         logo = await query('SELECT logo FROM canal where id=?', [video.canal])
-        video_object.channel_logo = logo[0].imagem
+        video_object.channel_logo = logo[0].logo
 
         video_object.date = video.data_publicacao
-        video_object.url = video.yt_thumbnail
-        video_object.id = video.id
+        video_object.url = video.url_youtube
+        video_object.id = video.id.toString()
         video_object.name = video.titulo
         video_object.duration = video.duracao
         resolve(video_object)
