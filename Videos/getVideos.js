@@ -21,7 +21,8 @@ router.get('/excel', async function (req, res) {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sheet1');
 
-    worksheet.addRow(['id', 'slug', 'canal', "titulo","url_youtube","miniatura","yt_thumbnail","descrição","duração","categoria","data_publicação"]);    tabela.forEach(rowData => {
+    worksheet.addRow(['id', 'slug', 'canal', "titulo","url_youtube","miniatura","yt_thumbnail","descrição","duração","categoria","data_publicação"]);
+    tabela.forEach(rowData => {
         worksheet.addRow(Object.values(rowData));
     });
 
