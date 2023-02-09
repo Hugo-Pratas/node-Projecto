@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {query} = require("../Services/Query_db")
+const ExcelJS = require("exceljs");
 
 router.get('/', async function (req, res) {
     page=req.query.page
@@ -14,6 +15,22 @@ router.get('/', async function (req, res) {
         videos_send.push(await videoObject(video))
     }
     res.send(videos_send);
+});
+router.get('/excel', async function (req, res) {
+    tabela= await query('SELECT * FROM VIDEO')
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Sheet1');
+
+    worksheet.addRow(['id', 'slug', 'canal', "titulo","url_youtube","miniatura","yt_thumbnail","descrição","duração","categoria","data_publicação"]);    tabela.forEach(rowData => {
+        worksheet.addRow(Object.values(rowData));
+    });
+
+    excel= workbook.xlsx.writeFile('videos_data.xlsx')
+        .then(function(file) {
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', 'attachment; filename=TROJAN.xlsx');
+            res.send(file)
+        });
 });
 router.get('/:id_video', async function (req, res) {
     videos = await getVideo(req.params.id_video);
@@ -50,6 +67,8 @@ router.get('/tagid/:tag_id', async function (req, res) {
     }
     res.send(videos);
 });
+
+
 
 function getVideo(ids_video){
     return new Promise(async function (resolve, reject) {
